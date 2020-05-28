@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:svara/Utils/color_config.dart';
 import 'package:svara/Widgets/itemlist.dart';
 
 class Favourites extends StatefulWidget {
@@ -22,8 +23,8 @@ class _FavouritesState extends State<Favourites> {
                 'FAVOURITES',
                 style: TextStyle(
                   fontFamily: 'Arial',
-                  fontSize: 20,
-                  color: const Color(0xfffcf5f5),
+                  fontSize: 18,
+                  color: whiteColor,
                   letterSpacing: 0.1,
                   fontWeight: FontWeight.w700,
                 ),
