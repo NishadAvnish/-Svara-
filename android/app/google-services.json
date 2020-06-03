@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "322106828285",
+    "firebase_url": "https://audiobook-15a69.firebaseio.com",
+    "project_id": "audiobook-15a69",
+    "storage_bucket": "audiobook-15a69.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:322106828285:android:2baebeaff75385940b6594",
+        "android_client_info": {
+          "package_name": "com.example.svara"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "322106828285-q1gj7h9lk9edo5daomncdclp2ofv60vs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC9kw1DiQ6ncVZ_uLyLZXIDQqnMbvu_mGg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "322106828285-q1gj7h9lk9edo5daomncdclp2ofv60vs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

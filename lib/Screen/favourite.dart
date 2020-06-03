@@ -32,7 +32,7 @@ class _FavouritesState extends State<Favourites> {
               ),
             ),
             SizedBox(height: 12,),
-            Expanded(child: ListView.separated(itemBuilder: (context,index)=>ItemList(index), itemCount: 30, separatorBuilder: (BuildContext context, int index) {
+            Expanded(child: ListView.separated(itemBuilder: (context,index)=>HomeItemList(index:index,flag:0), itemCount: 30, separatorBuilder: (BuildContext context, int index) {
               return SizedBox(height:15);
             },)),
         ],

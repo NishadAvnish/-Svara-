@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:svara/Utils/color_config.dart';
-import 'package:vector_math/vector_math_64.dart' as maths;
+import 'package:svara/Widgets/player_widget.dart';
 
 class Player extends StatefulWidget {
   @override
@@ -8,124 +8,142 @@ class Player extends StatefulWidget {
 }
 
 class _PlayerState extends State<Player> {
-  double _currentValue;
-  bool _isPlaying;
+  int _currentIndex;
+
   @override
   void initState() {
-    _currentValue = 0;
-    _isPlaying = true;
+    _currentIndex = 2;
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     final _mediaQuery = MediaQuery.of(context);
+
     return Scaffold(
-        body: Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: screenGradientColor,
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: screenGradientColor,
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
         ),
-      ),
-      child: Padding(
-        padding:
-            EdgeInsets.only(top: _mediaQuery.padding.top, left: 12, right: 12),
-        child: Column(
-          children: <Widget>[
-            Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  IconButton(
-                    icon: Icon(
-                      Icons.arrow_back,
-                      color: whiteColor,
-                    ),
-                    onPressed: () {},
+        child: CustomScrollView(slivers: [
+          SliverAppBar(
+            backgroundColor: Colors.transparent,
+            expandedHeight: _mediaQuery.size.height * 0.51,
+            automaticallyImplyLeading: false,
+            leading: Padding(
+              padding: const EdgeInsets.only(left: 12.0),
+              child: IconButton(
+                  icon: Icon(
+                    Icons.arrow_back,
+                    color: whiteColor,
                   ),
-                  IconButton(
-                      icon: Icon(
-                        Icons.favorite,
-                        color: whiteColor,
-                      ),
-                      onPressed: () {})
-                ]),
-            SizedBox(height: 12),
-            Container(
-              height: _mediaQuery.size.height * 0.23,
-              width: _mediaQuery.size.width * 0.456,
-              padding: const EdgeInsets.all(8.0),
-              constraints: BoxConstraints(
-                  minHeight: 120, minWidth: 120, maxHeight: 180, maxWidth: 180),
-              decoration: BoxDecoration(
-                  border: Border.all(width: 3, color: uniqueColor),
-                  shape: BoxShape.circle,
-                  image: DecorationImage(
-                      image: AssetImage("Assets/Images/c.jpg"),
-                      fit: BoxFit.fill)),
-            ),
-            SizedBox(height: 15),
-            Text(
-              'The Art Of Public Speaking',
-              style: TextStyle(
-                fontFamily: 'Malgun Gothic',
-                fontSize: 20,
-                color: whiteColor,
-                letterSpacing: 0.1,
-                fontWeight: FontWeight.w800,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Slider(
-                  max: 10,
-                  min: 0,
-                  activeColor: uniqueColor,
-                  inactiveColor: Colors.white,
-                  value: _currentValue,
-                  onChanged: (value) {
-                    setState(() {
-                      _currentValue = value;
-                    });
+                  onPressed: () {
+                    Navigator.pop(context);
                   }),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                Transform.rotate(
-                    angle: maths.radians(180),
-                    alignment: Alignment.center,
-                    child: IconButton(
-                        icon: Icon(
-                          Icons.play_arrow,
-                          size: 35,
-                        ),
-                        onPressed: null)),
-                Container(
-                    height: 50,
-                    width: 50,
-                    decoration: BoxDecoration(
-                        color: Colors.white, shape: BoxShape.circle),
-                    child: IconButton(
-                        icon: _isPlaying
-                            ? Icon(Icons.play_arrow)
-                            : Icon(Icons.pause),
-                        onPressed: () {
-                          setState(() {
-                            _isPlaying = !_isPlaying;
-                          });
-                        })),
-                IconButton(
-                    icon: Icon(Icons.play_arrow, size: 35), onPressed: null)
-              ],
+            actions: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(right: 12.0),
+                child: IconButton(
+                    icon: Icon(
+                      Icons.favorite,
+                      color: whiteColor,
+                    ),
+                    onPressed: () {}),
+              ),
+            ],
+            flexibleSpace: FlexibleSpaceBar(
+              background: Padding(
+                padding: EdgeInsets.only(
+                    top: _mediaQuery.padding.top + kToolbarHeight,
+                    left: 12,
+                    right: 12),
+                child: Column(
+                  children: <Widget>[
+                    PlayerWidget(),
+                    // Text(playList)
+                  ],
+                ),
+              ),
             ),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding:
+                  const EdgeInsets.only(left: 20.0, right: 12.0, bottom: 5),
+              child: Text(
+                'Up Next',
+                style: TextStyle(
+                    fontFamily: 'Malgun Gothic',
+                    fontSize: 17,
+                    color: Colors.white,
+                    letterSpacing: 0.03,
+                    fontWeight: FontWeight.bold),
+                textAlign: TextAlign.left,
+              ),
+            ),
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.only(left: 12.0, right: 12.0),
+            sliver: SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (BuildContext context, int index) {
+                  return index == _currentIndex
+                      ? Container(
+                          decoration: BoxDecoration(
+                              border: Border.all(width: 1, color: uniqueColor),
+                              borderRadius: BorderRadius.circular(20),
+                              color: Colors.white24),
+                          child: _listTile(context),
+                        )
+                      : _listTile(context);
+                },
+                childCount: 15,
+              ),
+            ),
+          ),
+        ]),
+      ),
+    );
+  }
+}
 
-            // Text(playList)
-          ],
+Widget _listTile(BuildContext context) {
+  final _size = MediaQuery.of(context).size;
+  return ListTile(
+    leading: Container(
+      constraints: BoxConstraints(
+        maxWidth: 40.0,
+        maxHeight: 40.0,
+        minWidth: 30.0,
+        minHeight: 30.0,
+      ),
+      decoration: BoxDecoration(
+        // borderRadius: BorderRadius.circular(12.0),
+        shape: BoxShape.circle,
+        image: DecorationImage(
+          image: const AssetImage('Assets/Images/b.jpg'),
+          fit: BoxFit.cover,
         ),
       ),
-    ));
-  }
+    ),
+    title: Padding(
+      padding: EdgeInsets.only(left: _size.width * 0.1),
+      child: Text(
+        'All marketer are liar',
+        style: TextStyle(
+          fontFamily: 'Arial',
+          fontSize: 13.5,
+          color: Colors.black54,
+          letterSpacing: 0.06,
+          fontWeight: FontWeight.w700,
+        ),
+        textAlign: TextAlign.left,
+      ),
+    ),
+  );
 }
