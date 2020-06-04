@@ -26,9 +26,11 @@ class _HomeState extends State<Home> {
 
   callProvider() async {
     await Provider.of<HomeProvider>(context, listen: false).fetchAudio();
-    setState(() {
-      _isLoading = false;
-    });
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   @override

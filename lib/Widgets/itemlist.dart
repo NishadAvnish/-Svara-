@@ -20,7 +20,7 @@ class HomeItemList extends StatelessWidget {
           )
         : InkWell(
             onTap: () {
-              Navigator.of(context).push(fadeTransition(child: Player()));
+              Navigator.of(context).push(fadeTransition(child: Player(homeclickedIndex: index,)));
             },
             child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -35,12 +35,11 @@ class HomeItemList extends StatelessWidget {
                           minHeight: 40.0,
                         ),
                         decoration: BoxDecoration(
-                          // borderRadius: BorderRadius.circular(12.0),
                           shape: BoxShape.circle,
                           image: DecorationImage(
                             image: NetworkImage(item.imageUrl),
                             fit: BoxFit.cover,
-                          ),
+                          ), 
                           border: Border.all(
                               width: 1.0, color: const Color(0xff707070)),
                         ),

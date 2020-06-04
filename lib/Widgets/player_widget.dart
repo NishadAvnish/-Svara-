@@ -1,6 +1,7 @@
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:svara/Provider/home_provider.dart';
 import 'package:svara/Provider/player_provider.dart';
 import 'package:svara/Utils/color_config.dart';
 import 'package:vector_math/vector_math_64.dart' as maths;
@@ -11,17 +12,18 @@ class PlayerWidget extends StatefulWidget {
 }
 
 class _PlayerWidgetState extends State<PlayerWidget> {
-  bool _isPlaying;
   AssetsAudioPlayer _audioAssetPlayer;
   int _audioDuration = 0;
   int _currentDuration = 0;
   String _timeLeft = "00:00";
 
+  PlayerProvider _playerProvider;
+  HomeProvider _homeProvider;
+
   @override
   void initState() {
     super.initState();
     _listenerToPlayer();
-    _isPlaying = true;
   }
 
   void _listenerToPlayer() {
@@ -48,47 +50,30 @@ class _PlayerWidgetState extends State<PlayerWidget> {
   }
 
   @override
+  void didChangeDependencies() {
+    _playerProvider = Provider.of<PlayerProvider>(context);
+    _homeProvider = Provider.of<HomeProvider>(context, listen: false);
+    currentPlaying(_playerProvider, _homeProvider);
+    super.didChangeDependencies();
+  }
+
+  @override
   void dispose() {
     super.dispose();
   }
 
-  final audio = Audio(
-    "Assets/Audio/mpd.mp3",
-    metas: Metas(
-      title: "Country",
-    ),
-  );
-
-  // to format the time in hous: minute:seconds
-  String formatTime(int milliseconds) {
-    final minutes = milliseconds / 60000;
-
-    String time = "";
-
-    // this will add seconds in time
-    time = ((minutes - int.parse(minutes.toString().split(".")[0])) * 60)
-            .toString()
-            .split(".")[0] +
-        time;
-
-    final hours = minutes.toInt() / 60;
-    // this will add minutes in time
-    time = ((hours - int.parse(hours.toString().split(".")[0])) * 60)
-            .toString()
-            .split(".")[0] +
-        ":" +
-        time;
-    // this will add hours in time if hourse is not 0
-    time =
-        hours.toInt() == 0 ? time : hours.toString().split(".")[0] + ":" + time;
-
-    return time;
+  void currentPlaying(
+    PlayerProvider playerProvider,
+    HomeProvider homeProvider,
+  ) {
+    playerProvider.audioFunc(Audio(
+      homeProvider.audioList[_playerProvider.currentPlayingIndex].audioUrl,
+    ));
   }
 
   @override
   Widget build(BuildContext context) {
     final _mediaQuery = MediaQuery.of(context);
-    final _playerProvider = Provider.of<PlayerProvider>(context);
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -102,13 +87,15 @@ class _PlayerWidgetState extends State<PlayerWidget> {
               border: Border.all(width: 3, color: uniqueColor),
               shape: BoxShape.circle,
               image: DecorationImage(
-                  image: AssetImage("Assets/Images/c.jpg"), fit: BoxFit.fill)),
+                  image: NetworkImage(_homeProvider
+                      .audioList[_playerProvider.currentPlayingIndex].imageUrl),
+                  fit: BoxFit.fill)),
         ),
         SizedBox(
           height: 15,
         ),
         Text(
-          'The Art Of Public Speaking',
+          _homeProvider.audioList[_playerProvider.currentPlayingIndex].title,
           style: TextStyle(
             fontFamily: 'Malgun Gothic',
             fontSize: 20,
@@ -170,19 +157,21 @@ class _PlayerWidgetState extends State<PlayerWidget> {
                   onPressed: null),
             ),
             Container(
-              height: 50,
-              width: 50,
-              decoration:
-                  BoxDecoration(color: Colors.white, shape: BoxShape.circle),
-              child: IconButton(
-                  icon: _isPlaying ? Icon(Icons.play_arrow) : Icon(Icons.pause),
-                  onPressed: () {
-                    _playerProvider.audioFunc(audio);
-                    setState(() {
-                      _isPlaying = !_isPlaying;
-                    });
-                  }),
-            ),
+                height: 50,
+                width: 50,
+                decoration:
+                    BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+                child: PlayerBuilder.isPlaying(
+                    player: _audioAssetPlayer,
+                    builder: (context, isPlaying) {
+                      return IconButton(
+                          icon: isPlaying
+                              ? Icon(Icons.pause)
+                              : Icon(Icons.play_arrow),
+                          onPressed: () {
+                            _audioAssetPlayer.playOrPause();
+                          });
+                    })),
             IconButton(icon: Icon(Icons.play_arrow, size: 35), onPressed: null),
             IconButton(
                 icon: Icon(Icons.loop,
@@ -198,5 +187,31 @@ class _PlayerWidgetState extends State<PlayerWidget> {
         ),
       ],
     );
+  }
+
+  // to format the time in hous: minute:seconds
+  String formatTime(int milliseconds) {
+    final minutes = milliseconds / 60000;
+
+    String time = "";
+
+    // this will add seconds in time
+    time = ((minutes - int.parse(minutes.toString().split(".")[0])) * 60)
+            .toString()
+            .split(".")[0] +
+        time;
+
+    final hours = minutes.toInt() / 60;
+    // this will add minutes in time
+    time = ((hours - int.parse(hours.toString().split(".")[0])) * 60)
+            .toString()
+            .split(".")[0] +
+        ":" +
+        time;
+    // this will add hours in time if hourse is not 0
+    time =
+        hours.toInt() == 0 ? time : hours.toString().split(".")[0] + ":" + time;
+
+    return time;
   }
 }

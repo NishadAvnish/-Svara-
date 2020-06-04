@@ -7,7 +7,6 @@ import 'package:svara/Model/audiobook_model.dart';
 
 class Databasehelper {
   static Database _database;
-
   String transTable = 'Transactions_Table';
   String colTitle = 'title';
   String colImageUrl = 'imageUrl';
@@ -31,8 +30,9 @@ class Databasehelper {
   }
 
   _onCreate(Database db, int version) async {
+    //PRIMARY KEY AUTOINCREMENT
     db.execute(
-        'CREATE TABLE $transTable($colTitle TEXT PRIMARY KEY AUTOINCREMENT, $colImageUrl TEXT, $colAudioUrl )');
+        'CREATE TABLE $transTable($colTitle TEXT , $colImageUrl TEXT, $colAudioUrl )');
   }
 
   Future<List<AudioBookModel>> getFavourite() async {

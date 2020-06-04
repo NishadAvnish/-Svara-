@@ -4,6 +4,16 @@ import 'package:flutter/cupertino.dart';
 class PlayerProvider with ChangeNotifier {
   AssetsAudioPlayer _audioAssetPlayer;
   int _count = 0;
+  int _currentPlayingIndex = 0;
+
+  int get currentPlayingIndex {
+    return _currentPlayingIndex;
+  }
+
+  void changeCurrentPlayingIndex(int index) {
+    _currentPlayingIndex = index;
+    notifyListeners();
+  }
 
   AssetsAudioPlayer get audioAssetPlayer {
     if (_audioAssetPlayer == null) {
@@ -18,10 +28,9 @@ class PlayerProvider with ChangeNotifier {
 
   audioFunc(Audio audio) {
     if (_count == 0) {
-      _audioAssetPlayer.open(audio, showNotification: true);
+      _audioAssetPlayer.open(Audio.network(audio.path),
+          showNotification: false);
       _count = 1;
     }
-
-    _audioAssetPlayer.playOrPause();
   }
 }

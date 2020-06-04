@@ -97,7 +97,7 @@ class _ScreenSelectorState extends State<ScreenSelector>
         unselectedLabelStyle: TextStyle(fontSize: 0),
         items: [
           _navigationItems("Home", Icons.home, 0),
-          _navigationItems("Favourites", Icons.favorite_border, 3),
+          _navigationItems("Favourites", Icons.favorite_border, 1),
         ],
         currentIndex: _selectedIndex,
         onTap: (int currentIndex) {

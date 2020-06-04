@@ -33,8 +33,8 @@ class HomeProvider with ChangeNotifier {
           _currentCount += 1;
         });
       }
+      notifyListeners();
     }
     _count = 1;
-    notifyListeners();
   }
 }
