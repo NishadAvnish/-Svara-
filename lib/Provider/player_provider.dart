@@ -30,6 +30,9 @@ class PlayerProvider with ChangeNotifier {
   void changeCurrentPlayingIndex(int index) {
     _currentPlayingIndex = index;
     notifyListeners();
+    _previousplayingIndex = _currentPlayingIndex;
+    print("previous $_previousplayingIndex");
+    print("current $_currentPlayingIndex");
   }
 
   AssetsAudioPlayer get audioAssetPlayer {
@@ -40,9 +43,11 @@ class PlayerProvider with ChangeNotifier {
   }
 
   audioFunc() {
-    _audioAssetPlayer.open(Playlist(audios: _playList),
-        autoStart: false, showNotification: false);
-    _audioAssetPlayer.playlistPlayAtIndex(_currentPlayingIndex);
+    
+      _audioAssetPlayer.open(Playlist(audios: _playList),
+          autoStart: false, showNotification: false);
+      _audioAssetPlayer.playlistPlayAtIndex(_currentPlayingIndex);
+    
   }
 
   void movePrevOrNext(String flag, [index]) {

@@ -21,20 +21,7 @@ class _ScreenSelectorState extends State<ScreenSelector>
   @override
   void initState() {
     _selectedIndex = 0;
-    rotationController = AnimationController(
-        duration: const Duration(seconds: 3),
-        reverseDuration: const Duration(seconds: 1),
-        vsync: this);
 
-    rotationController.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        rotationController.reverse();
-      }
-
-      if (status == AnimationStatus.dismissed) {
-        rotationController.forward();
-      }
-    });
     super.initState();
   }
 
@@ -47,9 +34,7 @@ class _ScreenSelectorState extends State<ScreenSelector>
 
     final _assetPlayer = Provider.of<PlayerProvider>(context).audioAssetPlayer;
 
-    if (_assetPlayer.isPlaying.value) {
-      rotationController.forward();
-    }
+    
 
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
@@ -57,16 +42,14 @@ class _ScreenSelectorState extends State<ScreenSelector>
           onPressed: () {
             Navigator.of(context).push(slideTransition(child: Player()));
           },
-          child: RotationTransition(
-              turns: Tween(begin: 0.0, end: 1.0).animate(rotationController),
-              child: Container(
-                height: 50,
-                width: 50,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                ),
-                child: Center(child: Text("Avnish")),
-              ))),
+          child: Container(
+            height: 50,
+            width: 50,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+            ),
+            child: Center(child: Text("Playing",style: TextStyle(fontSize:12),)),
+          )),
       body: Stack(
         children: <Widget>[
           Positioned.fill(

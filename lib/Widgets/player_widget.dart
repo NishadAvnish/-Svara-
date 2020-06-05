@@ -87,7 +87,6 @@ class _PlayerWidgetState extends State<PlayerWidget> {
   @override
   Widget build(BuildContext context) {
     final _mediaQuery = MediaQuery.of(context);
-    print("homeCLicked :${widget.homeClickedIndex}");
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [

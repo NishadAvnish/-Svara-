@@ -43,7 +43,7 @@ class _PlayerState extends State<Player> {
         child: CustomScrollView(slivers: [
           SliverAppBar(
             backgroundColor: Colors.transparent,
-            expandedHeight: _mediaQuery.size.height * 0.51,
+            expandedHeight: _mediaQuery.size.height * 0.52,
             automaticallyImplyLeading: false,
             leading: Padding(
               padding: const EdgeInsets.only(left: 12.0),
@@ -75,7 +75,9 @@ class _PlayerState extends State<Player> {
                     right: 12),
                 child: Column(
                   children: <Widget>[
-                    PlayerWidget(homeClickedIndex: widget.homeclickedIndex,),
+                    PlayerWidget(
+                      homeClickedIndex: widget.homeclickedIndex,
+                    ),
                   ],
                 ),
               ),
