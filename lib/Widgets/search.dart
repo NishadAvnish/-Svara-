@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:svara/Provider/home_provider.dart';
 import 'package:svara/Utils/color_config.dart';
 
 class Search extends StatelessWidget {
@@ -13,9 +15,8 @@ class Search extends StatelessWidget {
           child: Container(
             height: 50,
             decoration: BoxDecoration(
-              color: Colors.orangeAccent,
-              borderRadius: BorderRadius.circular(20)
-            ),
+                color: Colors.orangeAccent,
+                borderRadius: BorderRadius.circular(20)),
             child: TextField(
               focusNode: focusNode,
               textInputAction: TextInputAction.go,
@@ -26,6 +27,9 @@ class Search extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20),
                     borderSide: BorderSide(color: uniqueColor)),
               ),
+              onChanged: (String text){
+                Provider.of<HomeProvider>(context,listen: false).searched(text);
+              },
             ),
           ),
         ),

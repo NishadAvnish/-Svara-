@@ -37,6 +37,7 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     final _mediaQuery = MediaQuery.of(context);
     final _homeProvider = Provider.of<HomeProvider>(context, listen: true);
+    print(_homeProvider.audioList.length);
     return SafeArea(
       child: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),

@@ -9,13 +9,29 @@ class HomeProvider with ChangeNotifier {
   int _previousCount = 0;
 
   List<AudioBookModel> _audioList = [];
+  List<AudioBookModel> _searchedList = [];
+  List<AudioBookModel> _fromDatabaseList = [];
+
   List<AudioBookModel> get audioList {
     return [..._audioList];
   }
 
+  void searched(String searchedTitle) {
+    _searchedList.clear();
+    _fromDatabaseList.forEach((item) {
+      if (item.title.toLowerCase().contains(searchedTitle.toLowerCase())) {
+        _searchedList.add(item);
+      }
+    });
+
+    _audioList = _searchedList;
+    print("SearchedList ${_audioList.length}");
+    notifyListeners();
+  }
+
   Future<void> fetchAudio() async {
     await Future.delayed(Duration(milliseconds: 1));
-    _audioList = [
+    _fromDatabaseList = [
       AudioBookModel(
           audioUrl: "Assets/Audio/All Marketers Are Liar.mp3",
           imageUrl:
@@ -37,6 +53,7 @@ class HomeProvider with ChangeNotifier {
               "https://images.unsplash.com/photo-1587613725874-d9a1e8e23f6b?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60",
           title: "The Enterpreneur Roller Coaster"),
     ];
+    _audioList = _fromDatabaseList;
     notifyListeners();
   }
 
