@@ -7,6 +7,10 @@ import 'package:svara/Utils/color_config.dart';
 import 'package:vector_math/vector_math_64.dart' as maths;
 
 class PlayerWidget extends StatefulWidget {
+  final homeClickedIndex;
+
+  const PlayerWidget({this.homeClickedIndex});
+
   @override
   _PlayerWidgetState createState() => _PlayerWidgetState();
 }
@@ -16,9 +20,9 @@ class _PlayerWidgetState extends State<PlayerWidget> {
   int _audioDuration = 0;
   int _currentDuration = 0;
   String _timeLeft = "00:00";
-
   PlayerProvider _playerProvider;
   HomeProvider _homeProvider;
+  int _currentPlayingIndex;
 
   @override
   void initState() {
@@ -53,27 +57,37 @@ class _PlayerWidgetState extends State<PlayerWidget> {
   void didChangeDependencies() {
     _playerProvider = Provider.of<PlayerProvider>(context);
     _homeProvider = Provider.of<HomeProvider>(context, listen: false);
-    currentPlaying(_playerProvider, _homeProvider);
-    super.didChangeDependencies();
-  }
+    //this if condition help in preventing the reseting of assetAudioPlayer on clicking same audio item
+    if (_playerProvider.previousPlayingIndex != _currentPlayingIndex) {
+      currentPlaying(_playerProvider, _homeProvider);
+    }
 
-  @override
-  void dispose() {
-    super.dispose();
+    super.didChangeDependencies();
   }
 
   void currentPlaying(
     PlayerProvider playerProvider,
     HomeProvider homeProvider,
   ) {
-    playerProvider.audioFunc(Audio(
-      homeProvider.audioList[_playerProvider.currentPlayingIndex].audioUrl,
-    ));
+    playerProvider.audioFunc();
+
+    setState(() {
+      _currentPlayingIndex = playerProvider.currentPlayingIndex;
+    });
+  }
+
+  @override
+  void dispose() {
+    if (_audioAssetPlayer.isPlaying.value) {
+      // _playerProvider
+    }
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final _mediaQuery = MediaQuery.of(context);
+    print("homeCLicked :${widget.homeClickedIndex}");
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -87,15 +101,15 @@ class _PlayerWidgetState extends State<PlayerWidget> {
               border: Border.all(width: 3, color: uniqueColor),
               shape: BoxShape.circle,
               image: DecorationImage(
-                  image: NetworkImage(_homeProvider
-                      .audioList[_playerProvider.currentPlayingIndex].imageUrl),
+                  image: NetworkImage(
+                      _homeProvider.audioList[_currentPlayingIndex].imageUrl),
                   fit: BoxFit.fill)),
         ),
         SizedBox(
           height: 15,
         ),
         Text(
-          _homeProvider.audioList[_playerProvider.currentPlayingIndex].title,
+          _homeProvider.audioList[_currentPlayingIndex].title,
           style: TextStyle(
             fontFamily: 'Malgun Gothic',
             fontSize: 20,
@@ -146,6 +160,8 @@ class _PlayerWidgetState extends State<PlayerWidget> {
                 setState(() {});
               },
             ),
+            // this icon is for previous song in playlist
+
             Transform.rotate(
               angle: maths.radians(180),
               alignment: Alignment.center,
@@ -154,25 +170,45 @@ class _PlayerWidgetState extends State<PlayerWidget> {
                     Icons.play_arrow,
                     size: 35,
                   ),
-                  onPressed: null),
+                  onPressed: (_currentPlayingIndex > widget.homeClickedIndex)
+                      ? () {
+                          _playerProvider.movePrevOrNext("prev");
+                        }
+                      : null),
             ),
             Container(
                 height: 50,
                 width: 50,
                 decoration:
                     BoxDecoration(color: Colors.white, shape: BoxShape.circle),
-                child: PlayerBuilder.isPlaying(
+                child: PlayerBuilder.isBuffering(
                     player: _audioAssetPlayer,
-                    builder: (context, isPlaying) {
-                      return IconButton(
-                          icon: isPlaying
-                              ? Icon(Icons.pause)
-                              : Icon(Icons.play_arrow),
-                          onPressed: () {
-                            _audioAssetPlayer.playOrPause();
-                          });
-                    })),
-            IconButton(icon: Icon(Icons.play_arrow, size: 35), onPressed: null),
+                    builder: (context, isBuffering) => isBuffering
+                        ? Center(
+                            child: CircularProgressIndicator(
+                            backgroundColor: uniqueColor,
+                          ))
+                        : PlayerBuilder.isPlaying(
+                            player: _audioAssetPlayer,
+                            builder: (context, isPlaying) {
+                              return IconButton(
+                                  icon: isPlaying
+                                      ? Icon(Icons.pause)
+                                      : Icon(Icons.play_arrow),
+                                  onPressed: () {
+                                    _audioAssetPlayer.playOrPause();
+                                  });
+                            }))),
+            // this icon is for next song in playlist
+            IconButton(
+              icon: Icon(Icons.play_arrow, size: 35),
+              onPressed:
+                  (_playerProvider.audioList.length > _currentPlayingIndex + 1)
+                      ? () {
+                          _playerProvider.movePrevOrNext("next");
+                        }
+                      : null,
+            ),
             IconButton(
                 icon: Icon(Icons.loop,
                     size: 25,

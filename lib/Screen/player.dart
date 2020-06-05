@@ -75,7 +75,7 @@ class _PlayerState extends State<Player> {
                     right: 12),
                 child: Column(
                   children: <Widget>[
-                    PlayerWidget(),
+                    PlayerWidget(homeClickedIndex: widget.homeclickedIndex,),
                   ],
                 ),
               ),

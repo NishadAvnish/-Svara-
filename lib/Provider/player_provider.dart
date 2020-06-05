@@ -1,13 +1,30 @@
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:svara/Model/audiobook_model.dart';
 
 class PlayerProvider with ChangeNotifier {
   AssetsAudioPlayer _audioAssetPlayer;
   int _count = 0;
   int _currentPlayingIndex = 0;
+  //this previousplayingindex take cares of last clicked audioitem index
+  int _previousplayingIndex = -1;
+  List<AudioBookModel> audioList = [];
+  List<Audio> _playList = [];
+  PlayerProvider([audioList]) {
+    if (audioList != null) {
+      this.audioList = audioList;
+      for (int i = 0; i < this.audioList.length; i++) {
+        _playList.add(Audio.network(this.audioList[i].audioUrl));
+      }
+    }
+  }
 
   int get currentPlayingIndex {
     return _currentPlayingIndex;
+  }
+
+  int get previousPlayingIndex {
+    return _previousplayingIndex;
   }
 
   void changeCurrentPlayingIndex(int index) {
@@ -22,15 +39,22 @@ class PlayerProvider with ChangeNotifier {
     return _audioAssetPlayer;
   }
 
-  int get count {
-    return _count;
+  audioFunc() {
+    _audioAssetPlayer.open(Playlist(audios: _playList),
+        autoStart: false, showNotification: false);
+    _audioAssetPlayer.playlistPlayAtIndex(_currentPlayingIndex);
   }
 
-  audioFunc(Audio audio) {
-    if (_count == 0) {
-      _audioAssetPlayer.open(Audio.network(audio.path),
-          showNotification: false);
-      _count = 1;
+  void movePrevOrNext(String flag, [index]) {
+    if (flag == "prev") {
+      changeCurrentPlayingIndex(_currentPlayingIndex - 1);
+    } else if (flag == "next") {
+      changeCurrentPlayingIndex(_currentPlayingIndex + 1);
+    } else {
+      if (index != null) {
+        changeCurrentPlayingIndex(index);
+      }
     }
+    _audioAssetPlayer.playlistPlayAtIndex(_currentPlayingIndex);
   }
 }
