@@ -1,6 +1,8 @@
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:svara/Database/sqldtabase.dart';
+import 'package:svara/Provider/favourite_provider.dart';
 import 'package:svara/Provider/home_provider.dart';
 import 'package:svara/Provider/player_provider.dart';
 import 'package:svara/Utils/color_config.dart';
@@ -8,8 +10,8 @@ import 'package:vector_math/vector_math_64.dart' as maths;
 
 class PlayerWidget extends StatefulWidget {
   final homeClickedIndex;
-
-  const PlayerWidget({this.homeClickedIndex});
+  final String flag;
+  const PlayerWidget({this.homeClickedIndex, this.flag});
 
   @override
   _PlayerWidgetState createState() => _PlayerWidgetState();
@@ -69,7 +71,7 @@ class _PlayerWidgetState extends State<PlayerWidget> {
     PlayerProvider playerProvider,
     HomeProvider homeProvider,
   ) {
-    playerProvider.audioFunc();
+    playerProvider.audioFunc(flag: "newPlaying");
 
     setState(() {
       _currentPlayingIndex = playerProvider.currentPlayingIndex;
@@ -78,9 +80,6 @@ class _PlayerWidgetState extends State<PlayerWidget> {
 
   @override
   void dispose() {
-    if (_audioAssetPlayer.isPlaying.value) {
-      // _playerProvider
-    }
     super.dispose();
   }
 
@@ -154,10 +153,12 @@ class _PlayerWidgetState extends State<PlayerWidget> {
                   color: _audioAssetPlayer.isShuffling.value
                       ? uniqueColor
                       : Colors.grey),
-              onPressed: () {
-                _audioAssetPlayer.toggleShuffle();
-                setState(() {});
-              },
+              onPressed: widget.flag == "now playing"
+                  ? null
+                  : () {
+                      _audioAssetPlayer.toggleShuffle();
+                      setState(() {});
+                    },
             ),
             // this icon is for previous song in playlist
 
@@ -169,7 +170,8 @@ class _PlayerWidgetState extends State<PlayerWidget> {
                     Icons.play_arrow,
                     size: 35,
                   ),
-                  onPressed: (_currentPlayingIndex > widget.homeClickedIndex)
+                  onPressed: (_currentPlayingIndex > widget.homeClickedIndex &&
+                          widget.flag != "now playing")
                       ? () {
                           _playerProvider.movePrevOrNext("prev");
                         }
@@ -201,23 +203,25 @@ class _PlayerWidgetState extends State<PlayerWidget> {
             // this icon is for next song in playlist
             IconButton(
               icon: Icon(Icons.play_arrow, size: 35),
-              onPressed:
-                  (_playerProvider.audioList.length > _currentPlayingIndex + 1)
-                      ? () {
-                          _playerProvider.movePrevOrNext("next");
-                        }
-                      : null,
+              onPressed: (_playerProvider.audioList.length >
+                          _currentPlayingIndex + 1 &&
+                      widget.flag != "now playing")
+                  ? () {
+                      _playerProvider.movePrevOrNext("next");
+                    }
+                  : null,
             ),
             IconButton(
-                icon: Icon(Icons.loop,
-                    size: 25,
-                    color: _audioAssetPlayer.isLooping.value
-                        ? uniqueColor
-                        : Colors.grey),
-                onPressed: () {
-                  _audioAssetPlayer.toggleLoop();
-                  setState(() {});
-                }),
+              icon: Icon(
+                Icons.playlist_add,
+                size: 25,
+              ),
+              onPressed: () async {
+                Provider.of<FavouriteProvider>(context, listen: false)
+                    .addtoDatabase(_homeProvider
+                        .audioList[_playerProvider.currentPlayingIndex]);
+              },
+            )
           ],
         ),
       ],

@@ -6,6 +6,7 @@ import 'package:svara/page_transition.dart';
 import 'Provider/player_provider.dart';
 import 'Screen/home.dart';
 import 'Utils/color_config.dart';
+import 'Widgets/bottom_sheet.dart';
 
 class ScreenSelector extends StatefulWidget {
   @override
@@ -17,11 +18,11 @@ class _ScreenSelectorState extends State<ScreenSelector>
   int _selectedIndex;
   List<Widget> screens;
   AnimationController rotationController;
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
     _selectedIndex = 0;
-
     super.initState();
   }
 
@@ -34,13 +35,22 @@ class _ScreenSelectorState extends State<ScreenSelector>
 
     final _assetPlayer = Provider.of<PlayerProvider>(context).audioAssetPlayer;
 
-    
-
     return Scaffold(
+      key: _scaffoldKey,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
           onPressed: () {
-            Navigator.of(context).push(slideTransition(child: Player()));
+            if (_assetPlayer == null) {
+              _scaffoldKey.currentState.hideCurrentSnackBar();
+              _scaffoldKey.currentState.showSnackBar(SnackBar(
+                behavior: SnackBarBehavior.floating,
+                backgroundColor: Color.fromRGBO(16, 124, 173, 1),
+                content: Text('Currently no AudioBook playing'),
+                duration: Duration(milliseconds: 1500),
+              ));
+            } else {
+              showBotomSheet(context);
+            }
           },
           child: Container(
             height: 50,
@@ -48,7 +58,11 @@ class _ScreenSelectorState extends State<ScreenSelector>
             decoration: BoxDecoration(
               shape: BoxShape.circle,
             ),
-            child: Center(child: Text("Playing",style: TextStyle(fontSize:12),)),
+            child: Center(
+                child: Text(
+              "Playing",
+              style: TextStyle(fontSize: 12),
+            )),
           )),
       body: Stack(
         children: <Widget>[

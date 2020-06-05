@@ -32,7 +32,7 @@ class Databasehelper {
   _onCreate(Database db, int version) async {
     //PRIMARY KEY AUTOINCREMENT
     db.execute(
-        'CREATE TABLE $transTable($colTitle TEXT , $colImageUrl TEXT, $colAudioUrl )');
+        'CREATE TABLE $transTable($colTitle TEXT PRIMARY KEY , $colImageUrl TEXT, $colAudioUrl )');
   }
 
   Future<List<AudioBookModel>> getFavourite() async {
@@ -47,12 +47,25 @@ class Databasehelper {
     });
   }
 
+  Future<bool> isPresent(AudioBookModel transaction) async {
+    var dbClient = await database;
+    final List<Map<String, dynamic>> maps = await dbClient.rawQuery(
+        "SELECT * FROM $transTable WHERE $colTitle = '${transaction.title}'");
+    if (maps.length > 0) {
+      return true;
+    } else
+      return false;
+  }
+
   Future<void> addtoDatabase(AudioBookModel transaction) async {
     var dbClient = await database;
-    await dbClient.insert(
-      transTable,
-      transaction.tomap(),
-    );
+    final bool _isPresent = await isPresent(transaction);
+    if (!_isPresent) {
+      await dbClient.insert(
+        transTable,
+        transaction.tomap(),
+      );
+    }
   }
 
   Future<void> delete(String title) async {

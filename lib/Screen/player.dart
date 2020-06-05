@@ -56,17 +56,6 @@ class _PlayerState extends State<Player> {
                     Navigator.pop(context);
                   }),
             ),
-            actions: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(right: 12.0),
-                child: IconButton(
-                    icon: Icon(
-                      Icons.favorite,
-                      color: whiteColor,
-                    ),
-                    onPressed: () {}),
-              ),
-            ],
             flexibleSpace: FlexibleSpaceBar(
               background: Padding(
                 padding: EdgeInsets.only(
@@ -77,6 +66,7 @@ class _PlayerState extends State<Player> {
                   children: <Widget>[
                     PlayerWidget(
                       homeClickedIndex: widget.homeclickedIndex,
+                      flag: "new playing",
                     ),
                   ],
                 ),

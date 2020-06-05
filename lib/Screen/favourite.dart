@@ -16,11 +16,16 @@ class _FavouritesState extends State<Favourites> {
   void initState() {
     super.initState();
     _isLoading = true;
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     callFuture();
   }
 
   callFuture() async {
-    await Provider.of<FavouriteProvider>(context, listen: false).getFavourite();
+    await Provider.of<FavouriteProvider>(context, listen: true).getFavourite();
     if (mounted) {
       setState(() {
         _isLoading = false;
@@ -30,7 +35,7 @@ class _FavouritesState extends State<Favourites> {
 
   @override
   void dispose() {
-   // Databasehelper().close();
+    // Databasehelper().close();
     super.dispose();
   }
 

@@ -15,6 +15,8 @@ class PlayerProvider with ChangeNotifier {
       this.audioList = audioList;
       for (int i = 0; i < this.audioList.length; i++) {
         _playList.add(Audio.network(this.audioList[i].audioUrl));
+
+        // _playList.add(Audio.file(this.audioList[i].audioUrl));
       }
     }
   }
@@ -31,8 +33,6 @@ class PlayerProvider with ChangeNotifier {
     _currentPlayingIndex = index;
     notifyListeners();
     _previousplayingIndex = _currentPlayingIndex;
-    print("previous $_previousplayingIndex");
-    print("current $_currentPlayingIndex");
   }
 
   AssetsAudioPlayer get audioAssetPlayer {
@@ -42,12 +42,13 @@ class PlayerProvider with ChangeNotifier {
     return _audioAssetPlayer;
   }
 
-  audioFunc() {
-    
+  audioFunc({String flag}) {
+    if (flag == "now playing") {
+    } else {
       _audioAssetPlayer.open(Playlist(audios: _playList),
           autoStart: false, showNotification: false);
       _audioAssetPlayer.playlistPlayAtIndex(_currentPlayingIndex);
-    
+    }
   }
 
   void movePrevOrNext(String flag, [index]) {

@@ -11,6 +11,14 @@ class FavouriteProvider with ChangeNotifier {
 
   Databasehelper _databasehelper = Databasehelper();
 
+  Future<void> addtoDatabase(AudioBookModel transactionItem) async {
+    try {
+      await Databasehelper().addtoDatabase(transactionItem);
+    } catch (e) {
+      print(e);
+    }
+  }
+
   Future<void> getFavourite() async {
     _favouriteList = await _databasehelper.getFavourite();
     notifyListeners();
@@ -40,6 +48,6 @@ class FavouriteProvider with ChangeNotifier {
   }
 
   Future<void> closeDatabase() async {
-   await  _databasehelper.close();
+    await _databasehelper.close();
   }
 }
