@@ -59,6 +59,7 @@ class Databasehelper {
 
   Future<void> addtoDatabase(AudioBookModel transaction) async {
     var dbClient = await database;
+
     final bool _isPresent = await isPresent(transaction);
     if (!_isPresent) {
       await dbClient.insert(

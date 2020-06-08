@@ -76,7 +76,7 @@ class _HomeState extends State<Home> {
                       padding: EdgeInsets.only(bottom: 15),
                       child: HomeItemList(
                         index: index,
-                        flag: 0,
+                        flag: 1,
                         item: _homeProvider.audioList[index],
                         length: _homeProvider.audioList.length,
                       ),

@@ -9,7 +9,8 @@ import 'package:svara/Widgets/player_widget.dart';
 class Player extends StatefulWidget {
   //homeclickedIndex is denoted the cicked index on home page
   final int homeclickedIndex;
-  Player({this.homeclickedIndex});
+  final String flag;
+  Player({this.homeclickedIndex,this.flag});
   @override
   _PlayerState createState() => _PlayerState();
 }
@@ -66,7 +67,7 @@ class _PlayerState extends State<Player> {
                   children: <Widget>[
                     PlayerWidget(
                       homeClickedIndex: widget.homeclickedIndex,
-                      flag: "new playing",
+                      flag: widget.flag,
                     ),
                   ],
                 ),

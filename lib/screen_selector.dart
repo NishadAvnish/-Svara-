@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:svara/Screen/favourite.dart';
-import 'package:svara/Screen/player.dart';
-import 'package:svara/page_transition.dart';
 import 'Provider/player_provider.dart';
 import 'Screen/home.dart';
 import 'Utils/color_config.dart';
@@ -40,7 +38,7 @@ class _ScreenSelectorState extends State<ScreenSelector>
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
           onPressed: () {
-            if (_assetPlayer == null) {
+            if (_assetPlayer == null || _assetPlayer.current.value?.audio==null) {
               _scaffoldKey.currentState.hideCurrentSnackBar();
               _scaffoldKey.currentState.showSnackBar(SnackBar(
                 behavior: SnackBarBehavior.floating,

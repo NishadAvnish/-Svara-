@@ -20,7 +20,11 @@ class HomeItemList extends StatelessWidget {
           )
         : InkWell(
             onTap: () {
-              Navigator.of(context).push(fadeTransition(child: Player(homeclickedIndex: index,)));
+              Navigator.of(context).push(fadeTransition(
+                  child: Player(
+                homeclickedIndex: index,
+                flag: flag == 0 ? "favourite playing" : "new playing",
+              )));
             },
             child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -39,7 +43,7 @@ class HomeItemList extends StatelessWidget {
                           image: DecorationImage(
                             image: NetworkImage(item.imageUrl),
                             fit: BoxFit.cover,
-                          ), 
+                          ),
                           border: Border.all(
                               width: 1.0, color: const Color(0xff707070)),
                         ),
@@ -64,7 +68,7 @@ class HomeItemList extends StatelessWidget {
                       ),
                     ],
                   ),
-                  flag == 1
+                  flag == 0
                       ? IconButton(
                           icon: Icon(Icons.favorite_border), onPressed: () {})
                       : Container(),

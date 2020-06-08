@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:svara/Database/sqldtabase.dart';
 import 'package:svara/Provider/favourite_provider.dart';
 import 'package:svara/Utils/color_config.dart';
 import 'package:svara/Widgets/itemlist.dart';

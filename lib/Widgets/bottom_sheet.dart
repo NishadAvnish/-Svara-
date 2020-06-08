@@ -16,24 +16,24 @@ Future<void> showBotomSheet(BuildContext context) {
             minChildSize: 0.1,
             maxChildSize: 0.5,
             builder: (context, controller) {
-              return  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.vertical(
-                        top: const Radius.circular(20),
-                      ),
-                      gradient: LinearGradient(
-                        colors: screenGradientColor,
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                      ),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.only(top:15,bottom:15),
-                      child: PlayerWidget(
-                        homeClickedIndex: 1,
-                        flag: "now playing",
-                      ),
-                    ),
+              return Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.vertical(
+                    top: const Radius.circular(20),
+                  ),
+                  gradient: LinearGradient(
+                    colors: screenGradientColor,
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 15, bottom: 15),
+                  child: PlayerWidget(
+                    homeClickedIndex: -1,
+                    flag: "now playing",
+                  ),
+                ),
               );
             });
       });

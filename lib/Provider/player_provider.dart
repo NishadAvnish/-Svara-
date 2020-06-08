@@ -1,24 +1,34 @@
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:svara/Model/audiobook_model.dart';
 
 class PlayerProvider with ChangeNotifier {
   AssetsAudioPlayer _audioAssetPlayer;
-  int _count = 0;
   int _currentPlayingIndex = 0;
   //this previousplayingindex take cares of last clicked audioitem index
   int _previousplayingIndex = -1;
-  List<AudioBookModel> audioList = [];
-  List<Audio> _playList = [];
-  PlayerProvider([audioList]) {
-    if (audioList != null) {
-      this.audioList = audioList;
-      for (int i = 0; i < this.audioList.length; i++) {
-        _playList.add(Audio.network(this.audioList[i].audioUrl));
 
-        // _playList.add(Audio.file(this.audioList[i].audioUrl));
+  List<Audio> _homePlayList = [];
+  List<Audio> _favouritePlaylist = [];
+  bool _isFavouritePlaying = false;
+
+  PlayerProvider([audioList, favouriteList]) {
+    if (audioList != null) {
+      for (int i = 0; i < audioList.length; i++) {
+        _homePlayList.add(Audio.network(audioList[i].audioUrl));
       }
     }
+    if (favouriteList != null) {
+      for (int i = 0; i < favouriteList.length; i++) {
+        _favouritePlaylist.add(Audio.network(favouriteList[i].audioUrl));
+      }
+    }
+  }
+
+  List<Audio> get playList {
+    if (_isFavouritePlaying) {
+      return _favouritePlaylist;
+    } else
+      return _homePlayList;
   }
 
   int get currentPlayingIndex {
@@ -43,11 +53,22 @@ class PlayerProvider with ChangeNotifier {
   }
 
   audioFunc({String flag}) {
-    if (flag == "now playing") {
-    } else {
-      _audioAssetPlayer.open(Playlist(audios: _playList),
-          autoStart: false, showNotification: false);
-      _audioAssetPlayer.playlistPlayAtIndex(_currentPlayingIndex);
+    //this if check whether the request is from playing button or not if it is from playing button then it will play the last listened media
+    if (flag != "now playing") {
+      if (flag == "favourite playing") {
+        print("Avnish");
+        _audioAssetPlayer = null;
+        print("oldAsset${_audioAssetPlayer}");
+
+        print("newassetplayer${audioAssetPlayer}");
+
+        audioAssetPlayer.open(Playlist(audios: _favouritePlaylist),
+            autoStart: false, showNotification: false);
+        _audioAssetPlayer.playlistPlayAtIndex(_currentPlayingIndex);
+      } else {
+        _audioAssetPlayer.open(Playlist(audios: _homePlayList),
+            autoStart: true, showNotification: false);
+      }
     }
   }
 

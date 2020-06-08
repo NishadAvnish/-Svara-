@@ -71,7 +71,7 @@ class _PlayerWidgetState extends State<PlayerWidget> {
     PlayerProvider playerProvider,
     HomeProvider homeProvider,
   ) {
-    playerProvider.audioFunc(flag: "newPlaying");
+    playerProvider.audioFunc(flag: widget.flag);
 
     setState(() {
       _currentPlayingIndex = playerProvider.currentPlayingIndex;
@@ -166,16 +166,17 @@ class _PlayerWidgetState extends State<PlayerWidget> {
               angle: maths.radians(180),
               alignment: Alignment.center,
               child: IconButton(
-                  icon: Icon(
-                    Icons.play_arrow,
-                    size: 35,
-                  ),
-                  onPressed: (_currentPlayingIndex > widget.homeClickedIndex &&
-                          widget.flag != "now playing")
-                      ? () {
-                          _playerProvider.movePrevOrNext("prev");
-                        }
-                      : null),
+                icon: Icon(
+                  Icons.play_arrow,
+                  size: 35,
+                ),
+                onPressed: (_currentPlayingIndex > widget.homeClickedIndex &&
+                        widget.flag != "now playing")
+                    ? () {
+                        _playerProvider.movePrevOrNext("prev");
+                      }
+                    : null,
+              ),
             ),
             Container(
                 height: 50,
@@ -203,13 +204,13 @@ class _PlayerWidgetState extends State<PlayerWidget> {
             // this icon is for next song in playlist
             IconButton(
               icon: Icon(Icons.play_arrow, size: 35),
-              onPressed: (_playerProvider.audioList.length >
-                          _currentPlayingIndex + 1 &&
-                      widget.flag != "now playing")
-                  ? () {
-                      _playerProvider.movePrevOrNext("next");
-                    }
-                  : null,
+              onPressed:
+                  (_playerProvider.playList.length > _currentPlayingIndex + 1 &&
+                          widget.flag != "now playing")
+                      ? () {
+                          _playerProvider.movePrevOrNext("next");
+                        }
+                      : null,
             ),
             IconButton(
               icon: Icon(
