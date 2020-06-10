@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:svara/Screen/player.dart';
 
+import '../Utils/color_config.dart';
 import '../page_transition.dart';
 
 class HomeItemList extends StatelessWidget {
@@ -24,6 +25,7 @@ class HomeItemList extends StatelessWidget {
                   child: Player(
                 homeclickedIndex: index,
                 flag: flag == 0 ? "favourite playing" : "new playing",
+              
               )));
             },
             child: Row(
@@ -70,7 +72,7 @@ class HomeItemList extends StatelessWidget {
                   ),
                   flag == 0
                       ? IconButton(
-                          icon: Icon(Icons.favorite_border), onPressed: () {})
+                          icon: Icon(Icons.favorite,color: uniqueColor,), onPressed: () {})
                       : Container(),
                 ]),
           );

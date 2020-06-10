@@ -32,7 +32,7 @@ class Databasehelper {
   _onCreate(Database db, int version) async {
     //PRIMARY KEY AUTOINCREMENT
     db.execute(
-        'CREATE TABLE $transTable($colTitle TEXT PRIMARY KEY , $colImageUrl TEXT, $colAudioUrl )');
+        'CREATE TABLE $transTable($colTitle TEXT PRIMARY KEY , $colImageUrl TEXT, $colAudioUrl TEXT)');
   }
 
   Future<List<AudioBookModel>> getFavourite() async {
@@ -40,9 +40,9 @@ class Databasehelper {
     final List<Map<String, dynamic>> maps = await dbClient.query(transTable);
     return List.generate(maps.length, (i) {
       return AudioBookModel(
-        title: maps[i]['title'],
-        imageUrl: maps[i]['imageUrl'],
-        audioUrl: maps[i]['audioUrl'],
+        title: maps[i]['$colTitle'],
+        imageUrl: maps[i]['$colImageUrl'],
+        audioUrl: maps[i]['$colAudioUrl'],
       );
     });
   }

@@ -15,15 +15,11 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: HomeProvider()),
-        // ChangeNotifierProxyProvider<HomeProvider, PlayerProvider>(
-        //     create: (context) => PlayerProvider(),
-        //     update: (context, homeProvider, playerProvider) =>
-        //         PlayerProvider(homeProvider.audioList)),
-        ChangeNotifierProvider.value(value: FavouriteProvider()),
-        ChangeNotifierProxyProvider2<HomeProvider,FavouriteProvider, PlayerProvider>(
+        ChangeNotifierProxyProvider<HomeProvider, PlayerProvider>(
             create: (context) => PlayerProvider(),
-            update: (context, homeProvider,favouriteProvider, playerProvider) =>
-                PlayerProvider(homeProvider.audioList,favouriteProvider.favouriteList)),
+            update: (context, homeProvider, playerProvider) =>
+                PlayerProvider(homeProvider.audioList)),
+        ChangeNotifierProvider.value(value: FavouriteProvider()),
       ],
       child: MaterialApp(
         theme: ThemeData(

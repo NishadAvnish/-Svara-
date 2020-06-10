@@ -8,6 +8,8 @@ import 'package:svara/Provider/player_provider.dart';
 import 'package:svara/Utils/color_config.dart';
 import 'package:vector_math/vector_math_64.dart' as maths;
 
+import '../Provider/favourite_provider.dart';
+
 class PlayerWidget extends StatefulWidget {
   final homeClickedIndex;
   final String flag;
@@ -23,6 +25,7 @@ class _PlayerWidgetState extends State<PlayerWidget> {
   int _currentDuration = 0;
   String _timeLeft = "00:00";
   PlayerProvider _playerProvider;
+  FavouriteProvider _favouriteProvider;
   HomeProvider _homeProvider;
   int _currentPlayingIndex;
 
@@ -59,6 +62,12 @@ class _PlayerWidgetState extends State<PlayerWidget> {
   void didChangeDependencies() {
     _playerProvider = Provider.of<PlayerProvider>(context);
     _homeProvider = Provider.of<HomeProvider>(context, listen: false);
+    _favouriteProvider = Provider.of<FavouriteProvider>(context, listen: false);
+
+    if (widget.flag == "favourite playing") {
+      _playerProvider.playatindex(
+          _favouriteProvider.favouriteList[widget.homeClickedIndex]);
+    }
     //this if condition help in preventing the reseting of assetAudioPlayer on clicking same audio item
     if (_playerProvider.previousPlayingIndex != _currentPlayingIndex) {
       currentPlaying(_playerProvider, _homeProvider);

@@ -1,6 +1,9 @@
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/cupertino.dart';
 
+import '../Model/audiobook_model.dart';
+import '../Model/audiobook_model.dart';
+
 class PlayerProvider with ChangeNotifier {
   AssetsAudioPlayer _audioAssetPlayer;
   int _currentPlayingIndex = 0;
@@ -8,27 +11,20 @@ class PlayerProvider with ChangeNotifier {
   int _previousplayingIndex = -1;
 
   List<Audio> _homePlayList = [];
-  List<Audio> _favouritePlaylist = [];
-  bool _isFavouritePlaying = false;
+  List<AudioBookModel> _audioBookList = [];
 
-  PlayerProvider([audioList, favouriteList]) {
+  PlayerProvider([audioList]) {
     if (audioList != null) {
+      _audioBookList = audioList;
+
       for (int i = 0; i < audioList.length; i++) {
         _homePlayList.add(Audio.network(audioList[i].audioUrl));
-      }
-    }
-    if (favouriteList != null) {
-      for (int i = 0; i < favouriteList.length; i++) {
-        _favouritePlaylist.add(Audio.network(favouriteList[i].audioUrl));
       }
     }
   }
 
   List<Audio> get playList {
-    if (_isFavouritePlaying) {
-      return _favouritePlaylist;
-    } else
-      return _homePlayList;
+    return _homePlayList;
   }
 
   int get currentPlayingIndex {
@@ -55,21 +51,16 @@ class PlayerProvider with ChangeNotifier {
   audioFunc({String flag}) {
     //this if check whether the request is from playing button or not if it is from playing button then it will play the last listened media
     if (flag != "now playing") {
-      if (flag == "favourite playing") {
-        print("Avnish");
-        _audioAssetPlayer = null;
-        print("oldAsset${_audioAssetPlayer}");
-
-        print("newassetplayer${audioAssetPlayer}");
-
-        audioAssetPlayer.open(Playlist(audios: _favouritePlaylist),
-            autoStart: false, showNotification: false);
-        _audioAssetPlayer.playlistPlayAtIndex(_currentPlayingIndex);
-      } else {
-        _audioAssetPlayer.open(Playlist(audios: _homePlayList),
-            autoStart: true, showNotification: false);
-      }
+      _audioAssetPlayer.open(Playlist(audios: _homePlayList),
+          autoStart: true, showNotification: false);
     }
+  }
+
+  void playatindex(AudioBookModel audio) {
+    int _index = _audioBookList
+        .indexWhere((audioItem) => audioItem.title == audio.title);
+    changeCurrentPlayingIndex(_index);
+    _audioAssetPlayer.playlistPlayAtIndex(_index);
   }
 
   void movePrevOrNext(String flag, [index]) {

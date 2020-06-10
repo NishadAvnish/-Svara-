@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:svara/Database/sqldtabase.dart';
 import 'package:svara/Model/audiobook_model.dart';
 
+import '../Model/audiobook_model.dart';
+
 class FavouriteProvider with ChangeNotifier {
   List<AudioBookModel> _favouriteList = [];
 
@@ -24,26 +26,12 @@ class FavouriteProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> toggleFavourite(int index, AudioBookModel transactionData) {
-    bool _oldStatus = _favouriteList[index].favourite;
-
-    _favouriteList[index].favourite = !_favouriteList[index].favourite;
-    notifyListeners();
-
-    if (_favouriteList[index].favourite) {
-      try {
-        _databasehelper.addtoDatabase(transactionData);
-      } catch (e) {
-        _favouriteList[index].favourite = _oldStatus;
-      }
-    } else {
-      try {
-        _databasehelper.delete(transactionData.title);
-      } catch (e) {
-        _favouriteList[index].favourite = _oldStatus;
-      }
+  Future<void> removeFromDatabase(AudioBookModel deleteAudio) {
+    try {
+      _databasehelper.delete(deleteAudio.title);
+    } catch (e) {
+      throw e;
     }
-
     notifyListeners();
   }
 
