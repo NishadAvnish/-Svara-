@@ -36,10 +36,9 @@ class PlayerProvider with ChangeNotifier {
   }
 
   void playlist(List<AudioBookModel> _playlist, String currentScreenFlag) {
-    if (currentScreenFlag == "favourite playing") {
-      _isFavouriteScreen = true;
-    } else
-      _isFavouriteScreen = false;
+    currentScreenFlag == "favourite playing"
+        ? _isFavouriteScreen = true
+        : _isFavouriteScreen = false;
 
     if (currentScreenFlag != _previousScreenFlag) {
       _favouritePlaylist.clear();
@@ -68,14 +67,6 @@ class PlayerProvider with ChangeNotifier {
           autoStart: true, showNotification: false);
       _audioAssetPlayer.playlistPlayAtIndex(_currentPlayingIndex);
     }
-  }
-
-  void findAndPlay(AudioBookModel audio) {
-    print(audio.title);
-    int _index = _audioBookList
-        .indexWhere((audioItem) => audioItem.title == audio.title);
-
-    changeCurrentPlayingIndex(_index);
   }
 
   void movePrevOrNext(String flag, [index]) {
