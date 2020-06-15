@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:svara/Model/audiobook_model.dart';
 import 'package:svara/Provider/home_provider.dart';
+import 'package:svara/Provider/recently_provider.dart';
 import 'package:svara/Utils/color_config.dart';
 import 'package:svara/Widgets/itemlist.dart';
 import 'package:svara/Widgets/recently_played.dart';
@@ -26,6 +27,7 @@ class _HomeState extends State<Home> {
 
   callProvider() async {
     await Provider.of<HomeProvider>(context, listen: false).fetchAudio();
+    await Provider.of<RecentlyProvider>(context, listen: false).getRecent();
     if (mounted) {
       setState(() {
         _isLoading = false;
@@ -37,22 +39,25 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     final _mediaQuery = MediaQuery.of(context);
     final _homeProvider = Provider.of<HomeProvider>(context, listen: true);
-    print(_homeProvider.audioList.length);
+    final _recentProvider =
+        Provider.of<RecentlyProvider>(context, listen: true);
+
     return SafeArea(
       child: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: CustomScrollView(slivers: <Widget>[
           SliverAppBar(
             backgroundColor: Colors.transparent,
-            expandedHeight: _mediaQuery.size.height * 0.3,
+            expandedHeight: _recentProvider.recentlyList.length > 0 ? 232 : 80,
             flexibleSpace: FlexibleSpaceBar(
                 background: Container(
-              padding: EdgeInsets.only(left: 12.0, right: 0),
+              padding: EdgeInsets.only(left: 12.0, right:12.0),
               child: Column(children: <Widget>[
                 SizedBox(height: 25),
                 Search(focusNode: _focusNode),
-                SizedBox(height: 25),
-                RecentlyPlayed(),
+                _recentProvider.recentlyList.length > 0
+                    ? RecentlyPlayed()
+                    : Container(),
               ]),
             )),
           ),

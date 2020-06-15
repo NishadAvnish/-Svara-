@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:svara/Provider/favourite_provider.dart';
 import 'package:svara/Provider/home_provider.dart';
 import 'package:svara/Provider/player_provider.dart';
+import 'package:svara/Provider/recently_provider.dart';
 import 'package:svara/Utils/color_config.dart';
 import 'package:vector_math/vector_math_64.dart' as maths;
 
@@ -25,6 +26,7 @@ class _PlayerWidgetState extends State<PlayerWidget> {
   String _timeLeft = "00:00";
   PlayerProvider _playerProvider;
   FavouriteProvider _favouriteProvider;
+  RecentlyProvider _recentlyProvider;
   HomeProvider _homeProvider;
   int _currentPlayingIndex;
 
@@ -35,10 +37,15 @@ class _PlayerWidgetState extends State<PlayerWidget> {
   }
 
   void _listenToPlayer() {
+    // these conditional statements is for making a playlist and tell the playerProvider that from whihc screen the Listener is
     if (widget.flag != "now playing") {
       if (widget.flag == "new playing") {
         Provider.of<PlayerProvider>(context, listen: false).playlist(
             Provider.of<HomeProvider>(context, listen: false).audioList,
+            widget.flag);
+      } else if (widget.flag == "recent playing") {
+        Provider.of<PlayerProvider>(context, listen: false).playlist(
+            Provider.of<RecentlyProvider>(context, listen: false).recentlyList,
             widget.flag);
       } else {
         Provider.of<PlayerProvider>(context, listen: false).playlist(
@@ -87,16 +94,18 @@ class _PlayerWidgetState extends State<PlayerWidget> {
   }
 
   void currentPlaying() {
-    // if (widget.flag == "favourite playing") {
-    //   _playerProvider.findAndPlay(
-    //       _favouriteProvider.favouriteList[widget.homeClickedIndex]);
-    // }
-
     _playerProvider.audioFunc(flag: widget.flag);
 
     setState(() {
       _currentPlayingIndex = _playerProvider.currentPlayingIndex;
     });
+
+    // adding to recentplaying database
+    if (widget.flag != "now playing" && widget.flag != "recent playing")
+      Provider.of<RecentlyProvider>(context, listen: false).addtoDatabase(
+          widget.flag == "favourite playing"
+              ? _favouriteProvider.favouriteList[_currentPlayingIndex]
+              : _homeProvider.audioList[_currentPlayingIndex]);
   }
 
   @override
@@ -107,7 +116,7 @@ class _PlayerWidgetState extends State<PlayerWidget> {
   @override
   Widget build(BuildContext context) {
     final _mediaQuery = MediaQuery.of(context);
-
+    _recentlyProvider = Provider.of<RecentlyProvider>(context, listen: false);
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -118,22 +127,29 @@ class _PlayerWidgetState extends State<PlayerWidget> {
           constraints: BoxConstraints(
               minHeight: 40, minWidth: 40, maxHeight: 180, maxWidth: 180),
           decoration: BoxDecoration(
-              border: Border.all(width: 3, color: uniqueColor),
-              shape: BoxShape.circle,
-              image: DecorationImage(
-                  image: NetworkImage(widget.flag == "new playing"
-                      ? _homeProvider.audioList[_currentPlayingIndex].imageUrl
-                      : _favouriteProvider
-                          .favouriteList[_currentPlayingIndex].imageUrl),
-                  fit: BoxFit.fill)),
+            border: Border.all(width: 3, color: uniqueColor),
+            shape: BoxShape.circle,
+            image: DecorationImage(
+                image: NetworkImage(_playerProvider.wasRecentPlaying
+                    ? _recentlyProvider
+                        .recentlyList[_currentPlayingIndex].imageUrl
+                    : !_playerProvider.wasFavouritePlaying
+                        ? _homeProvider.audioList[_currentPlayingIndex].imageUrl
+                        : _favouriteProvider
+                            .favouriteList[_currentPlayingIndex].imageUrl),
+                fit: BoxFit.fill),
+          ),
         ),
         SizedBox(
           height: 15,
         ),
         Text(
-          widget.flag == "new playing"
-              ? _homeProvider.audioList[_currentPlayingIndex].title
-              : _favouriteProvider.favouriteList[_currentPlayingIndex].title,
+          _playerProvider.wasRecentPlaying
+              ? _recentlyProvider.recentlyList[_currentPlayingIndex].title
+              : !_playerProvider.wasFavouritePlaying
+                  ? _homeProvider.audioList[_currentPlayingIndex].title
+                  : _favouriteProvider
+                      .favouriteList[_currentPlayingIndex].title,
           style: TextStyle(
             fontFamily: 'Malgun Gothic',
             fontSize: 20,

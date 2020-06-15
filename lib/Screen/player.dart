@@ -4,6 +4,7 @@ import 'package:svara/Model/audiobook_model.dart';
 import 'package:svara/Provider/favourite_provider.dart';
 import 'package:svara/Provider/home_provider.dart';
 import 'package:svara/Provider/player_provider.dart';
+import 'package:svara/Provider/recently_provider.dart';
 import 'package:svara/Utils/color_config.dart';
 import 'package:svara/Widgets/player_widget.dart';
 
@@ -33,6 +34,8 @@ class _PlayerState extends State<Player> {
   Widget build(BuildContext context) {
     final _mediaQuery = MediaQuery.of(context);
     final _homeProvider = Provider.of<HomeProvider>(context, listen: false);
+    final _recentProvider =
+        Provider.of<RecentlyProvider>(context, listen: false);
     final _favouriteProvider =
         Provider.of<FavouriteProvider>(context, listen: false);
     return Scaffold(
@@ -110,24 +113,30 @@ class _PlayerState extends State<Player> {
                                   child: _listTile(
                                       context,
                                       index,
-                                      widget.flag == "new playing"
-                                          ? _homeProvider.audioList[index]
-                                          : _favouriteProvider
-                                              .favouriteList[index]),
+                                      widget.flag == "recent playing"
+                                          ? _recentProvider.recentlyList[index]
+                                          : widget.flag == "new playing"
+                                              ? _homeProvider.audioList[index]
+                                              : _favouriteProvider
+                                                  .favouriteList[index]),
                                 )
                               : _listTile(
                                   context,
                                   index,
-                                  widget.flag == "new playing"
-                                      ? _homeProvider.audioList[index]
-                                      : _favouriteProvider
-                                          .favouriteList[index]);
+                                  widget.flag == "recent playing"
+                                      ? _recentProvider.recentlyList[index]
+                                      : widget.flag == "new playing"
+                                          ? _homeProvider.audioList[index]
+                                          : _favouriteProvider
+                                              .favouriteList[index]);
                         })
                       : Container();
                 },
-                childCount: widget.flag == "new playing"
-                    ? _homeProvider.audioList.length
-                    : _favouriteProvider.favouriteList.length,
+                childCount: widget.flag == "recent playing"
+                    ? _recentProvider.recentlyList.length
+                    : widget.flag == "new playing"
+                        ? _homeProvider.audioList.length
+                        : _favouriteProvider.favouriteList.length,
               ),
             ),
           ),
