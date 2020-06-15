@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:svara/Model/audiobook_model.dart';
+import 'package:svara/Provider/favourite_provider.dart';
 import 'package:svara/Provider/home_provider.dart';
 import 'package:svara/Provider/player_provider.dart';
 import 'package:svara/Utils/color_config.dart';
@@ -10,7 +11,7 @@ class Player extends StatefulWidget {
   //homeclickedIndex is denoted the cicked index on home page
   final int homeclickedIndex;
   final String flag;
-  Player({this.homeclickedIndex,this.flag});
+  Player({this.homeclickedIndex, this.flag});
   @override
   _PlayerState createState() => _PlayerState();
 }
@@ -32,6 +33,8 @@ class _PlayerState extends State<Player> {
   Widget build(BuildContext context) {
     final _mediaQuery = MediaQuery.of(context);
     final _homeProvider = Provider.of<HomeProvider>(context, listen: false);
+    final _favouriteProvider =
+        Provider.of<FavouriteProvider>(context, listen: false);
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -104,15 +107,27 @@ class _PlayerState extends State<Player> {
                                           width: 1, color: uniqueColor),
                                       borderRadius: BorderRadius.circular(20),
                                       color: Colors.white24),
-                                  child: _listTile(context, index,
-                                      _homeProvider.audioList[index]),
+                                  child: _listTile(
+                                      context,
+                                      index,
+                                      widget.flag == "new playing"
+                                          ? _homeProvider.audioList[index]
+                                          : _favouriteProvider
+                                              .favouriteList[index]),
                                 )
-                              : _listTile(context, index,
-                                  _homeProvider.audioList[index]);
+                              : _listTile(
+                                  context,
+                                  index,
+                                  widget.flag == "new playing"
+                                      ? _homeProvider.audioList[index]
+                                      : _favouriteProvider
+                                          .favouriteList[index]);
                         })
                       : Container();
                 },
-                childCount: _homeProvider.audioList.length,
+                childCount: widget.flag == "new playing"
+                    ? _homeProvider.audioList.length
+                    : _favouriteProvider.favouriteList.length,
               ),
             ),
           ),

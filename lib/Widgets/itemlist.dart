@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:svara/Provider/favourite_provider.dart';
 import 'package:svara/Screen/player.dart';
 
 import '../Utils/color_config.dart';
@@ -25,7 +27,6 @@ class HomeItemList extends StatelessWidget {
                   child: Player(
                 homeclickedIndex: index,
                 flag: flag == 0 ? "favourite playing" : "new playing",
-              
               )));
             },
             child: Row(
@@ -72,7 +73,16 @@ class HomeItemList extends StatelessWidget {
                   ),
                   flag == 0
                       ? IconButton(
-                          icon: Icon(Icons.favorite,color: uniqueColor,), onPressed: () {})
+                          icon: Icon(
+                            Icons.favorite,
+                            color: uniqueColor,
+                          ),
+                          onPressed: () {
+                            final _provider =
+                                Provider.of<FavouriteProvider>(context,listen: false);
+                            _provider.removeFromDatabase(
+                                _provider.favouriteList[index]);
+                          })
                       : Container(),
                 ]),
           );

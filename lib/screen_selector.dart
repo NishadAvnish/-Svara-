@@ -38,7 +38,8 @@ class _ScreenSelectorState extends State<ScreenSelector>
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
           onPressed: () {
-            if (_assetPlayer == null || _assetPlayer.current.value?.audio==null) {
+            if (_assetPlayer == null ||
+                _assetPlayer.current.value?.audio == null) {
               _scaffoldKey.currentState.hideCurrentSnackBar();
               _scaffoldKey.currentState.showSnackBar(SnackBar(
                 behavior: SnackBarBehavior.floating,

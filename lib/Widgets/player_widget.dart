@@ -1,7 +1,6 @@
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:svara/Database/sqldtabase.dart';
 import 'package:svara/Provider/favourite_provider.dart';
 import 'package:svara/Provider/home_provider.dart';
 import 'package:svara/Provider/player_provider.dart';
@@ -32,10 +31,25 @@ class _PlayerWidgetState extends State<PlayerWidget> {
   @override
   void initState() {
     super.initState();
-    _listenerToPlayer();
+    _listenToPlayer();
   }
 
-  void _listenerToPlayer() {
+  void _listenToPlayer() {
+    if (widget.flag != "now playing") {
+      if (widget.flag == "new playing") {
+        Provider.of<PlayerProvider>(context, listen: false).playlist(
+            Provider.of<HomeProvider>(context, listen: false).audioList,
+            widget.flag);
+      } else {
+        Provider.of<PlayerProvider>(context, listen: false).playlist(
+            Provider.of<FavouriteProvider>(
+              context,
+              listen: false,
+            ).favouriteList,
+            widget.flag);
+      }
+    }
+
     _audioAssetPlayer =
         Provider.of<PlayerProvider>(context, listen: false).audioAssetPlayer;
 
@@ -60,30 +74,28 @@ class _PlayerWidgetState extends State<PlayerWidget> {
 
   @override
   void didChangeDependencies() {
-    _playerProvider = Provider.of<PlayerProvider>(context);
     _homeProvider = Provider.of<HomeProvider>(context, listen: false);
     _favouriteProvider = Provider.of<FavouriteProvider>(context, listen: false);
+    _playerProvider = Provider.of<PlayerProvider>(context, listen: true);
 
-    if (widget.flag == "favourite playing") {
-      _playerProvider.playatindex(
-          _favouriteProvider.favouriteList[widget.homeClickedIndex]);
-    }
     //this if condition help in preventing the reseting of assetAudioPlayer on clicking same audio item
     if (_playerProvider.previousPlayingIndex != _currentPlayingIndex) {
-      currentPlaying(_playerProvider, _homeProvider);
+      currentPlaying();
     }
 
     super.didChangeDependencies();
   }
 
-  void currentPlaying(
-    PlayerProvider playerProvider,
-    HomeProvider homeProvider,
-  ) {
-    playerProvider.audioFunc(flag: widget.flag);
+  void currentPlaying() {
+    // if (widget.flag == "favourite playing") {
+    //   _playerProvider.findAndPlay(
+    //       _favouriteProvider.favouriteList[widget.homeClickedIndex]);
+    // }
+
+    _playerProvider.audioFunc(flag: widget.flag);
 
     setState(() {
-      _currentPlayingIndex = playerProvider.currentPlayingIndex;
+      _currentPlayingIndex = _playerProvider.currentPlayingIndex;
     });
   }
 
@@ -95,6 +107,7 @@ class _PlayerWidgetState extends State<PlayerWidget> {
   @override
   Widget build(BuildContext context) {
     final _mediaQuery = MediaQuery.of(context);
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -108,15 +121,19 @@ class _PlayerWidgetState extends State<PlayerWidget> {
               border: Border.all(width: 3, color: uniqueColor),
               shape: BoxShape.circle,
               image: DecorationImage(
-                  image: NetworkImage(
-                      _homeProvider.audioList[_currentPlayingIndex].imageUrl),
+                  image: NetworkImage(widget.flag == "new playing"
+                      ? _homeProvider.audioList[_currentPlayingIndex].imageUrl
+                      : _favouriteProvider
+                          .favouriteList[_currentPlayingIndex].imageUrl),
                   fit: BoxFit.fill)),
         ),
         SizedBox(
           height: 15,
         ),
         Text(
-          _homeProvider.audioList[_currentPlayingIndex].title,
+          widget.flag == "new playing"
+              ? _homeProvider.audioList[_currentPlayingIndex].title
+              : _favouriteProvider.favouriteList[_currentPlayingIndex].title,
           style: TextStyle(
             fontFamily: 'Malgun Gothic',
             fontSize: 20,
